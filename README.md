@@ -1,2 +1,4 @@
 # AirBnB_clone
-AirBnB Clone project
+<h1 align="center">ALX AirBnB</h1>
+<p align="center">An AirBnB clone.</p>
+
