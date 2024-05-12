@@ -36,7 +36,7 @@ class TestCity(unittest.TestCase):
         cls.state = State(name="California")
         cls.city = City(name="San Francisco", state_id=cls.state.id)
 
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -60,7 +60,7 @@ class TestCity(unittest.TestCase):
         del cls.state
         del cls.city
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -77,14 +77,14 @@ class TestCity(unittest.TestCase):
     def test_attributes(self):
         """Check for attributes."""
         ct = City()
-        self.assertEqual(str, type(ct.id))
-        self.assertEqual(datetime, type(ct.created_at))
-        self.assertEqual(datetime, type(ct.updated_at))
+        self.assertEqual(str, isinstance(ct.id))
+        self.assertEqual(datetime, isinstance(ct.created_at))
+        self.assertEqual(datetime, isinstance(ct.updated_at))
         self.assertTrue(hasattr(ct, "__tablename__"))
         self.assertTrue(hasattr(ct, "name"))
         self.assertTrue(hasattr(ct, "state_id"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
         """Check that relevant DBStorage attributes are non-nullable."""
@@ -98,7 +98,7 @@ class TestCity(unittest.TestCase):
             self.dbstorage._DBStorage__session.commit()
         self.dbstorage._DBStorage__session.rollback()
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_state_relationship_deletes(self):
         """Test delete cascade in City-State relationship."""
@@ -153,7 +153,7 @@ class TestCity(unittest.TestCase):
         self.assertIn("'name': '{}'".format(self.city.name), s)
         self.assertIn("'state_id': '{}'".format(self.city.state_id), s)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
         """Test save method with FileStorage."""
@@ -163,7 +163,7 @@ class TestCity(unittest.TestCase):
         with open("file.json", "r") as f:
             self.assertIn("City." + self.city.id, f.read())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""
@@ -187,7 +187,7 @@ class TestCity(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         city_dict = self.city.to_dict()
-        self.assertEqual(dict, type(city_dict))
+        self.assertEqual(dict, isinstance(city_dict))
         self.assertEqual(self.city.id, city_dict["id"])
         self.assertEqual("City", city_dict["__class__"])
         self.assertEqual(self.city.created_at.isoformat(),

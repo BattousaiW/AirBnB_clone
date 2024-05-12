@@ -35,7 +35,7 @@ class TestState(unittest.TestCase):
         cls.state = State(name="California")
         cls.city = City(name="San Jose", state_id=cls.state.id)
 
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -59,7 +59,7 @@ class TestState(unittest.TestCase):
         del cls.state
         del cls.city
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -76,12 +76,12 @@ class TestState(unittest.TestCase):
     def test_attributes(self):
         """Check for attributes."""
         st = State()
-        self.assertEqual(str, type(st.id))
-        self.assertEqual(datetime, type(st.created_at))
-        self.assertEqual(datetime, type(st.updated_at))
+        self.assertEqual(str, isinstance(st.id))
+        self.assertEqual(datetime, isinstance(st.created_at))
+        self.assertEqual(datetime, isinstance(st.updated_at))
         self.assertTrue(hasattr(st, "name"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
         """Check that relevant DBStorage attributes are non-nullable."""
@@ -90,14 +90,14 @@ class TestState(unittest.TestCase):
             self.dbstorage._DBStorage__session.commit()
         self.dbstorage._DBStorage__session.rollback()
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_cities(self):
         """Test reviews attribute."""
-        key = "{}.{}".format(type(self.city).__name__, self.city.id)
+        key = "{}.{}".format(isinstance(self.city).__name__, self.city.id)
         self.filestorage._FileStorage__objects[key] = self.city
         cities = self.state.cities
-        self.assertTrue(list, type(cities))
+        self.assertTrue(list, isinstance(cities))
         self.assertIn(self.city, cities)
 
     def test_is_subclass(self):
@@ -133,7 +133,7 @@ class TestState(unittest.TestCase):
             repr(self.state.updated_at)), s)
         self.assertIn("'name': '{}'".format(self.state.name), s)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
         """Test save method with FileStorage."""
@@ -143,7 +143,7 @@ class TestState(unittest.TestCase):
         with open("file.json", "r") as f:
             self.assertIn("State." + self.state.id, f.read())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""
@@ -166,7 +166,7 @@ class TestState(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         state_dict = self.state.to_dict()
-        self.assertEqual(dict, type(state_dict))
+        self.assertEqual(dict, isinstance(state_dict))
         self.assertEqual(self.state.id, state_dict["id"])
         self.assertEqual("State", state_dict["__class__"])
         self.assertEqual(self.state.created_at.isoformat(),

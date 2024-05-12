@@ -46,7 +46,7 @@ class TestPlace(unittest.TestCase):
         cls.amenity = Amenity(name="water", place=cls.place.id)
         cls.filestorage = FileStorage()
 
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -74,7 +74,7 @@ class TestPlace(unittest.TestCase):
         del cls.review
         del cls.amenity
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -91,9 +91,9 @@ class TestPlace(unittest.TestCase):
     def test_attributes(self):
         """Check for attributes."""
         us = Place()
-        self.assertEqual(str, type(us.id))
-        self.assertEqual(datetime, type(us.created_at))
-        self.assertEqual(datetime, type(us.updated_at))
+        self.assertEqual(str, isinstance(us.id))
+        self.assertEqual(datetime, isinstance(us.created_at))
+        self.assertEqual(datetime, isinstance(us.updated_at))
         self.assertTrue(hasattr(us, "__tablename__"))
         self.assertTrue(hasattr(us, "city_id"))
         self.assertTrue(hasattr(us, "name"))
@@ -105,7 +105,7 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(hasattr(us, "latitude"))
         self.assertTrue(hasattr(us, "longitude"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
         """Test that email attribute is non-nullable."""
@@ -125,25 +125,26 @@ class TestPlace(unittest.TestCase):
             self.dbstorage._DBStorage__session.commit()
         self.dbstorage._DBStorage__session.rollback()
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_reviews_filestorage(self):
         """Test reviews attribute."""
-        key = "{}.{}".format(type(self.review).__name__, self.review.id)
+        key = "{}.{}".format(isinstance(self.review).__name__, self.review.id)
         self.filestorage._FileStorage__objects[key] = self.review
         reviews = self.place.reviews
-        self.assertTrue(list, type(reviews))
+        self.assertTrue(list, isinstance(reviews))
         self.assertIn(self.review, reviews)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_amenities(self):
         """Test amenities attribute."""
-        key = "{}.{}".format(type(self.amenity).__name__, self.amenity.id)
+        key = "{}.{}".format(isinstance(self.amenity).__name__,
+                             self.amenity.id)
         self.filestorage._FileStorage__objects[key] = self.amenity
         self.place.amenities = self.amenity
         amenities = self.place.amenities
-        self.assertTrue(list, type(amenities))
+        self.assertTrue(list, isinstance(amenities))
         self.assertIn(self.amenity, amenities)
 
     def test_is_subclass(self):
@@ -181,7 +182,7 @@ class TestPlace(unittest.TestCase):
         self.assertIn("'user_id': '{}'".format(self.place.user_id), s)
         self.assertIn("'name': '{}'".format(self.place.name), s)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
         """Test save method with FileStorage."""
@@ -191,7 +192,7 @@ class TestPlace(unittest.TestCase):
         with open("file.json", "r") as f:
             self.assertIn("Place." + self.place.id, f.read())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""
@@ -217,7 +218,7 @@ class TestPlace(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         place_dict = self.place.to_dict()
-        self.assertEqual(dict, type(place_dict))
+        self.assertEqual(dict, isinstance(place_dict))
         self.assertEqual(self.place.id, place_dict["id"])
         self.assertEqual("Place", place_dict["__class__"])
         self.assertEqual(self.place.created_at.isoformat(),

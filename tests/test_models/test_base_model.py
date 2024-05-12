@@ -62,9 +62,9 @@ class TestBaseModel(unittest.TestCase):
 
     def test_attributes(self):
         """Check for attributes."""
-        self.assertEqual(str, type(self.base.id))
-        self.assertEqual(datetime, type(self.base.created_at))
-        self.assertEqual(datetime, type(self.base.updated_at))
+        self.assertEqual(str, isinstance(self.base.id))
+        self.assertEqual(datetime, isinstance(self.base.created_at))
+        self.assertEqual(datetime, isinstance(self.base.updated_at))
 
     def test_methods(self):
         """Check for methods."""
@@ -112,7 +112,7 @@ class TestBaseModel(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         base_dict = self.base.to_dict()
-        self.assertEqual(dict, type(base_dict))
+        self.assertEqual(dict, isinstance(base_dict))
         self.assertEqual(self.base.id, base_dict["id"])
         self.assertEqual("BaseModel", base_dict["__class__"])
         self.assertEqual(self.base.created_at.isoformat(),

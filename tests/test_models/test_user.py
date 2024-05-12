@@ -33,7 +33,7 @@ class TestUser(unittest.TestCase):
         cls.filestorage = FileStorage()
         cls.user = User(email="poppy@holberton.com", password="betty98")
 
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -56,7 +56,7 @@ class TestUser(unittest.TestCase):
             pass
         del cls.user
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -73,9 +73,9 @@ class TestUser(unittest.TestCase):
     def test_attributes(self):
         """Check for attributes."""
         us = User(email="a", password="a")
-        self.assertEqual(str, type(us.id))
-        self.assertEqual(datetime, type(us.created_at))
-        self.assertEqual(datetime, type(us.updated_at))
+        self.assertEqual(str, isinstance(us.id))
+        self.assertEqual(datetime, isinstance(us.created_at))
+        self.assertEqual(datetime, isinstance(us.updated_at))
         self.assertTrue(hasattr(us, "__tablename__"))
         self.assertTrue(hasattr(us, "email"))
         self.assertTrue(hasattr(us, "password"))
@@ -84,7 +84,7 @@ class TestUser(unittest.TestCase):
         self.assertTrue(hasattr(us, "places"))
         self.assertTrue(hasattr(us, "reviews"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_email_not_nullable(self):
         """Test that email attribute is non-nullable."""
@@ -130,7 +130,7 @@ class TestUser(unittest.TestCase):
         self.assertIn("'email': '{}'".format(self.user.email), s)
         self.assertIn("'password': '{}'".format(self.user.password), s)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
         """Test save method with FileStorage."""
@@ -140,7 +140,7 @@ class TestUser(unittest.TestCase):
         with open("file.json", "r") as f:
             self.assertIn("User." + self.user.id, f.read())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""
@@ -163,7 +163,7 @@ class TestUser(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         user_dict = self.user.to_dict()
-        self.assertEqual(dict, type(user_dict))
+        self.assertEqual(dict, isinstance(user_dict))
         self.assertEqual(self.user.id, user_dict["id"])
         self.assertEqual("User", user_dict["__class__"])
         self.assertEqual(self.user.created_at.isoformat(),

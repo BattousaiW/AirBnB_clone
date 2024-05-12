@@ -24,7 +24,7 @@ class TestFileStorage(unittest.TestCase):
 
         Temporarily renames any existing file.json.
         Resets FileStorage objects dictionary.
-        Creates instances of all class types for testing.
+        Creates instances of all class isinstances for testing.
         """
         try:
             os.rename("file.json", "tmp")
@@ -33,25 +33,25 @@ class TestFileStorage(unittest.TestCase):
         FileStorage._FileStorage__objects = {}
         cls.storage = FileStorage()
         cls.base = BaseModel()
-        key = "{}.{}".format(type(cls.base).__name__, cls.base.id)
+        key = "{}.{}".format(isinstance(cls.base).__name__, cls.base.id)
         FileStorage._FileStorage__objects[key] = cls.base
         cls.user = User()
-        key = "{}.{}".format(type(cls.user).__name__, cls.user.id)
+        key = "{}.{}".format(isinstance(cls.user).__name__, cls.user.id)
         FileStorage._FileStorage__objects[key] = cls.user
         cls.state = State()
-        key = "{}.{}".format(type(cls.state).__name__, cls.state.id)
+        key = "{}.{}".format(isinstance(cls.state).__name__, cls.state.id)
         FileStorage._FileStorage__objects[key] = cls.state
         cls.place = Place()
-        key = "{}.{}".format(type(cls.place).__name__, cls.place.id)
+        key = "{}.{}".format(isinstance(cls.place).__name__, cls.place.id)
         FileStorage._FileStorage__objects[key] = cls.place
         cls.city = City()
-        key = "{}.{}".format(type(cls.city).__name__, cls.city.id)
+        key = "{}.{}".format(isinstance(cls.city).__name__, cls.city.id)
         FileStorage._FileStorage__objects[key] = cls.city
         cls.amenity = Amenity()
-        key = "{}.{}".format(type(cls.amenity).__name__, cls.amenity.id)
+        key = "{}.{}".format(isinstance(cls.amenity).__name__, cls.amenity.id)
         FileStorage._FileStorage__objects[key] = cls.amenity
         cls.review = Review()
-        key = "{}.{}".format(type(cls.review).__name__, cls.review.id)
+        key = "{}.{}".format(isinstance(cls.review).__name__, cls.review.id)
         FileStorage._FileStorage__objects[key] = cls.review
 
     @classmethod
@@ -94,8 +94,8 @@ class TestFileStorage(unittest.TestCase):
 
     def test_attributes(self):
         """Check for attributes."""
-        self.assertEqual(str, type(FileStorage._FileStorage__file_path))
-        self.assertEqual(dict, type(FileStorage._FileStorage__objects))
+        self.assertEqual(str, isinstance(FileStorage._FileStorage__file_path))
+        self.assertEqual(dict, isinstance(FileStorage._FileStorage__objects))
 
     def test_methods(self):
         """Check for methods."""
@@ -111,14 +111,14 @@ class TestFileStorage(unittest.TestCase):
     def test_all(self):
         """Test default all method."""
         obj = self.storage.all()
-        self.assertEqual(type(obj), dict)
+        self.assertEqual(isinstance(obj), dict)
         self.assertIs(obj, FileStorage._FileStorage__objects)
         self.assertEqual(len(obj), 7)
 
     def test_all_cls(self):
         """Test all method with specified cls."""
         obj = self.storage.all(BaseModel)
-        self.assertEqual(type(obj), dict)
+        self.assertEqual(isinstance(obj), dict)
         self.assertEqual(len(obj), 1)
         self.assertEqual(self.base, list(obj.values())[0])
 
@@ -147,7 +147,7 @@ class TestFileStorage(unittest.TestCase):
         """Test reload method."""
         bm = BaseModel()
         with open("file.json", "w", encoding="utf-8") as f:
-            key = "{}.{}".format(type(bm).__name__, bm.id)
+            key = "{}.{}".format(isinstance(bm).__name__, bm.id)
             json.dump({key: bm.to_dict()}, f)
         self.storage.reload()
         store = FileStorage._FileStorage__objects
@@ -163,7 +163,7 @@ class TestFileStorage(unittest.TestCase):
     def test_delete(self):
         """Test delete method."""
         bm = BaseModel()
-        key = "{}.{}".format(type(bm).__name__, bm.id)
+        key = "{}.{}".format(isinstance(bm).__name__, bm.id)
         FileStorage._FileStorage__objects[key] = bm
         self.storage.delete(bm)
         self.assertNotIn(bm, FileStorage._FileStorage__objects)

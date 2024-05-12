@@ -34,7 +34,7 @@ class TestAmenity(unittest.TestCase):
         cls.filestorage = FileStorage()
         cls.amenity = Amenity(name="The Andrew Lindburg treatment")
 
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -56,7 +56,7 @@ class TestAmenity(unittest.TestCase):
             pass
         del cls.amenity
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if isinstance(models.storage) == DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -73,14 +73,14 @@ class TestAmenity(unittest.TestCase):
     def test_attributes(self):
         """Check for attributes."""
         us = Amenity(email="a", password="a")
-        self.assertEqual(str, type(us.id))
-        self.assertEqual(datetime, type(us.created_at))
-        self.assertEqual(datetime, type(us.updated_at))
+        self.assertEqual(str, isinstance(us.id))
+        self.assertEqual(datetime, isinstance(us.created_at))
+        self.assertEqual(datetime, isinstance(us.updated_at))
         self.assertTrue(hasattr(us, "__tablename__"))
         self.assertTrue(hasattr(us, "name"))
         self.assertTrue(hasattr(us, "place_amenities"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_email_not_nullable(self):
         """Test that email attribute is non-nullable."""
@@ -125,7 +125,7 @@ class TestAmenity(unittest.TestCase):
             repr(self.amenity.updated_at)), s)
         self.assertIn("'name': '{}'".format(self.amenity.name), s)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(isinstance(models.storage) == DBStorage,
                      "Testing DBStorage")
     def test_save_filestorage(self):
         """Test save method with FileStorage."""
@@ -135,7 +135,7 @@ class TestAmenity(unittest.TestCase):
         with open("file.json", "r") as f:
             self.assertIn("Amenity." + self.amenity.id, f.read())
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(isinstance(models.storage) == FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""
@@ -158,7 +158,7 @@ class TestAmenity(unittest.TestCase):
     def test_to_dict(self):
         """Test to_dict method."""
         amenity_dict = self.amenity.to_dict()
-        self.assertEqual(dict, type(amenity_dict))
+        self.assertEqual(dict, isinstance(amenity_dict))
         self.assertEqual(self.amenity.id, amenity_dict["id"])
         self.assertEqual("Amenity", amenity_dict["__class__"])
         self.assertEqual(self.amenity.created_at.isoformat(),
